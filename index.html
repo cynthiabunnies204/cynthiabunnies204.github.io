@@ -651,20 +651,6 @@ footer {
     transition: background 0.3s, color 0.3s, box-shadow 0.3s;
 }
 
-/* HOVER */
-.navbar a:hover {
-    background: #f9e547;   /* vàng */
-    color: #0f2a1c;        /* xanh đậm */
-    box-shadow: 0 0 15px rgba(249,229,71,0.6);
-}
-
-/* ĐANG ĐƯỢC CHỌN */
-.navbar a.active {
-    background: #f9e547;   /* vàng */
-    color: #0f2a1c;        /* xanh */
-    box-shadow: 0 0 18px rgba(249,229,71,0.8);
-}
-
 </style>
 </head>
 
@@ -697,12 +683,12 @@ footer {
                 </span>
             </a>
         </li>
-        <li><a href="#tacgia class="active">Tác giả</a></li>
-        <li><a href="#tacpham class="active">Tác phẩm</a></li>
-        <li><a href="#tomtat class="active">Tóm tắt</a></li>
-        <li><a href="#trichdan class="active">Trích đoạn</a></li>
-        <li><a href="#funfacts class="active">Thông tin thú vị</a></li>
-        <li><a href="#loibinh class="active">Cảm nhận</a></li>
+        <li><a href="#tacgia">Tác giả</a></li>
+        <li><a href="#tacpham">Tác phẩm</a></li>
+        <li><a href="#tomtat">Tóm tắt</a></li>
+        <li><a href="#trichdan">Trích đoạn</a></li>
+        <li><a href="#funfacts">Thông tin thú vị</a></li>
+        <li><a href="#loibinh">Cảm nhận</a></li>
     </ul>
 </nav>
 
@@ -905,19 +891,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
-<script>
-const menuLinks = document.querySelectorAll('.navbar a');
 
-menuLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        menuLinks.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-    });
-});
-</script>
 
 </body>
 </html>
+
 
 
 
