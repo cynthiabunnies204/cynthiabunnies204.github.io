@@ -594,11 +594,43 @@ footer {
     height: 100vh;
 }
 @media (max-width: 768px) {
+
+    /* GIỮ HERO Y HỆT DESKTOP */
     .hero {
-        flex-direction: column; /* mobile */
-        text-align: center;
+        flex-direction: row !important;
+        text-align: left !important;
+        height: 100vh;
+    }
+
+    .hero-text {
+        max-width: 50%;
+    }
+
+    .hero-img {
+        display: flex;
+        justify-content: center;
+    }
+
+    /* GIỮ MENU KHÔNG XẾP DỌC */
+    .navbar ul {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+    }
+
+    /* GIỮ TẤT CẢ SECTION KHÁC KHÔNG BỊ DỌC */
+    .quotes-container,
+    .funfacts-container,
+    .works-images {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+    }
+
+    /* CHỐNG VỠ MÀN HÌNH */
+    body {
+        overflow-x: auto;
     }
 }
+
 
 </style>
 </head>
@@ -833,6 +865,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
