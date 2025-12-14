@@ -697,12 +697,12 @@ footer {
                 </span>
             </a>
         </li>
-        <li><a href="#tacgia">Tác giả</a></li>
-        <li><a href="#tacpham">Tác phẩm</a></li>
-        <li><a href="#tomtat">Tóm tắt</a></li>
-        <li><a href="#trichdan">Trích đoạn</a></li>
-        <li><a href="#funfacts">Thông tin thú vị</a></li>
-        <li><a href="#loibinh">Cảm nhận</a></li>
+        <li><a href="#tacgia class="active">Tác giả</a></li>
+        <li><a href="#tacpham class="active">Tác phẩm</a></li>
+        <li><a href="#tomtat class="active">Tóm tắt</a></li>
+        <li><a href="#trichdan class="active">Trích đoạn</a></li>
+        <li><a href="#funfacts class="active">Thông tin thú vị</a></li>
+        <li><a href="#loibinh class="active">Cảm nhận</a></li>
     </ul>
 </nav>
 
@@ -905,9 +905,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+<script>
+const menuLinks = document.querySelectorAll('.navbar a');
+
+menuLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        menuLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+    });
+});
+</script>
 
 </body>
 </html>
+
 
 
 
