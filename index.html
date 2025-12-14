@@ -644,6 +644,26 @@ footer {
     white-space: normal !important;
     display: block !important;
 }
+/* LINK MENU */
+.navbar a {
+    padding: 8px 16px;
+    border-radius: 999px;
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+/* HOVER */
+.navbar a:hover {
+    background: #f9e547;   /* vàng */
+    color: #0f2a1c;        /* xanh đậm */
+    box-shadow: 0 0 15px rgba(249,229,71,0.6);
+}
+
+/* ĐANG ĐƯỢC CHỌN */
+.navbar a.active {
+    background: #f9e547;   /* vàng */
+    color: #0f2a1c;        /* xanh */
+    box-shadow: 0 0 18px rgba(249,229,71,0.8);
+}
 
 </style>
 </head>
@@ -888,6 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
