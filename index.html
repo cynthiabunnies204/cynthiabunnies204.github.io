@@ -1228,7 +1228,7 @@ footer {
     </div>
 </section>
 <section id="audio-sec">
-    <h2 class="section-title">Giai điệu Audio</h2>
+    <h2 class="section-title">Audio</h2>
     <div class="card" style="text-align:center;">
         <div class="flower-touch-area" style="margin:auto;" onclick="toggleAudio()">
             <div class="petals-group" id="audio-petals">
@@ -1248,8 +1248,7 @@ footer {
             </div>
         </div>
 
-        <p style="margin-top:20px; font-style: italic;">Đang phát: th.mp3</p>
-        <audio id="audio-th"><source src="th.mp3" type="audio/mpeg"></audio>
+        <audio id="audio-th"><source src="tknn.mp3" type="audio/mpeg"></audio>
     </div>
 </section>
 <section id="funfacts" class="reveal">
@@ -1375,31 +1374,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-function togglePlay() {
-    const audio = document.getElementById('audio-th');
-    const icon = document.getElementById('play-icon');
-    const petals = document.getElementById('rotating-petals');
-    const status = document.getElementById('status-display');
+/* ================= GIẢI QUYẾT XUNG ĐỘT & FIX AUDIO ================= */
 
-    if (audio.paused) {
-        audio.play();
-        icon.classList.replace('fa-play', 'fa-pause');
-        petals.style.animationPlayState = 'running';
-        status.innerText = "Đang ngân nga giai điệu...";
-    } else {
-        audio.pause();
-        icon.classList.replace('fa-pause', 'fa-play');
-        petals.style.animationPlayState = 'paused';
-        status.innerText = "Đã tạm dừng";
-    }
-}
-
-// Tự động dừng hiệu ứng khi nhạc kết thúc
-document.getElementById('audio-th').onended = function() {
-    document.getElementById('play-icon').classList.replace('fa-pause', 'fa-play');
-    document.getElementById('rotating-petals').style.animationPlayState = 'paused';
-    document.getElementById('status-display').innerText = "Phát lại?";
-};
+// 1. Khai báo biến Video
 const video = document.getElementById('my-video');
 const playBtn = document.getElementById('play-pause');
 const progressBar = document.getElementById('progress-bar');
@@ -1408,71 +1385,10 @@ const curTimeText = document.getElementById('current-time');
 const durTimeText = document.getElementById('duration-time');
 const videoWrapper = document.getElementById('video-wrapper');
 const controls = document.getElementById('video-controls');
-
-// Hàm định dạng thời gian (giây -> phút:giây)
-function formatTime(seconds) {
-    let min = Math.floor(seconds / 60);
-    let sec = Math.floor(seconds % 60);
-    return (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
-}
-
-// Khi video tải xong dữ liệu, hiển thị tổng thời gian
-video.addEventListener('loadedmetadata', () => {
-    durTimeText.innerText = formatTime(video.duration);
-});
-
-// Chạy/Dừng video
-playBtn.addEventListener('click', () => {
-    if (video.paused) {
-        video.play();
-        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-    } else {
-        video.pause();
-        playBtn.innerHTML = '<i class="fas fa-play"></i>';
-    }
-});
-
-// Cập nhật thanh tiến trình VÀ số giây khi video chạy
-video.addEventListener('timeupdate', () => {
-    // Cập nhật thanh dài
-    const percent = (video.currentTime / video.duration) * 100;
-    progressBar.style.width = percent + '%';
-    
-    // Cập nhật số giây đang chạy (Đây là phần quan trọng)
-    curTimeText.innerText = formatTime(video.currentTime);
-});
-
-// Tua video khi bấm vào thanh tiến trình
-progressCont.addEventListener('click', (e) => {
-    const rect = progressCont.getBoundingClientRect();
-    const pos = (e.clientX - rect.left) / rect.width;
-    video.currentTime = pos * video.duration;
-});
-
-// Hiệu ứng ẩn/hiện thanh công cụ khi di chuyển chuột
-videoWrapper.addEventListener('mouseenter', () => controls.style.opacity = '1');
-videoWrapper.addEventListener('mouseleave', () => {
-    if(!video.paused) controls.style.opacity = '0';
-});
 const optionsBtn = document.getElementById('options-btn');
 const optionsMenu = document.getElementById('options-menu');
 
-// Bấm để hiện/ẩn menu 3 chấm
-optionsBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    optionsMenu.style.display = optionsMenu.style.display === 'flex' ? 'none' : 'flex';
-});
-
-// Đóng menu khi bấm ra ngoài
-document.addEventListener('click', () => {
-    optionsMenu.style.display = 'none';
-});
-
-// Hàm thay đổi tốc độ phát
-function changeSpeed(speed) {
-    video.playbackRate = speed;
-    optionsMenu.style.display = 'none';
-}
+// 2. Khai báo biến Audio
 const audio = document.getElementById('audio-th');
 const audioIcon = document.getElementById('audio-icon');
 const audioPetals = document.getElementById('audio-petals');
@@ -1481,23 +1397,60 @@ const audioPCont = document.getElementById('audio-p-cont');
 const audioCurT = document.getElementById('audio-cur-t');
 const audioDurT = document.getElementById('audio-dur-t');
 
-// Hàm định dạng thời gian
-function formatAudioTime(s) {
-    if (isNaN(s)) return "00:00";
-    let m = Math.floor(s / 60);
-    let r = Math.floor(s % 60);
-    return (m < 10 ? '0' + m : m) + ':' + (r < 10 ? '0' + r : r);
+// Hàm định dạng thời gian chung
+function formatTimeGeneral(seconds) {
+    if (isNaN(seconds) || seconds === Infinity) return "00:00";
+    let min = Math.floor(seconds / 60);
+    let sec = Math.floor(seconds % 60);
+    return (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
 }
 
-// Khi tải xong nhạc
-audio.onloadedmetadata = () => {
-    audioDurT.innerText = formatAudioTime(audio.duration);
+/* --- LOGIC VIDEO --- */
+function toggleVideo() {
+    if (video.paused) {
+        video.play();
+        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    } else {
+        video.pause();
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    }
+}
+
+video.addEventListener('click', toggleVideo);
+playBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleVideo(); });
+
+video.addEventListener('timeupdate', () => {
+    const percent = (video.currentTime / video.duration) * 100;
+    progressBar.style.width = percent + '%';
+    curTimeText.innerText = formatTimeGeneral(video.currentTime);
+});
+
+video.addEventListener('loadedmetadata', () => {
+    durTimeText.innerText = formatTimeGeneral(video.duration);
+});
+
+progressCont.addEventListener('click', (e) => {
+    const rect = progressCont.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    video.currentTime = pos * video.duration;
+});
+
+// Tốc độ phát video
+function changeSpeed(speed) {
+    video.playbackRate = speed;
+    optionsMenu.style.display = 'none';
+}
+
+optionsBtn.onclick = (e) => {
+    e.stopPropagation();
+    optionsMenu.style.display = optionsMenu.style.display === 'flex' ? 'none' : 'flex';
 };
 
-// Hàm Bật/Tắt Audio và Xoay Hoa
+/* --- LOGIC AUDIO (ĐÃ FIX) --- */
 function toggleAudio() {
+    // Đảm bảo file audio đã sẵn sàng
     if (audio.paused) {
-        audio.play();
+        audio.play().catch(e => console.log("Chưa có tương tác người dùng hoặc file lỗi"));
         audioIcon.className = 'fas fa-pause';
         audioPetals.style.animationPlayState = 'running';
     } else {
@@ -1507,24 +1460,42 @@ function toggleAudio() {
     }
 }
 
-// Cập nhật thanh tiến trình Audio
-audio.ontimeupdate = () => {
-    const percent = (audio.currentTime / audio.duration) * 100;
-    audioPBar.style.width = percent + '%';
-    audioCurT.innerText = formatAudioTime(audio.currentTime);
-};
+// Cập nhật thời gian Audio
+audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        audioPBar.style.width = percent + '%';
+        audioCurT.innerText = formatTimeGeneral(audio.currentTime);
+    }
+});
 
-// Click vào thanh tiến trình để tua nhạc
-audioPCont.onclick = (e) => {
-    const scrubTime = (e.offsetX / audioPCont.offsetWidth) * audio.duration;
-    audio.currentTime = scrubTime;
-};
+// Hiển thị tổng thời gian ngay khi có thể
+audio.addEventListener('durationchange', () => {
+    audioDurT.innerText = formatTimeGeneral(audio.duration);
+});
+
+// Tua nhạc
+audioPCont.addEventListener('click', (e) => {
+    const rect = audioPCont.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = pos * audio.duration;
+});
+
+// Ẩn/hiện controls video
+videoWrapper.addEventListener('mouseenter', () => controls.style.opacity = '1');
+videoWrapper.addEventListener('mouseleave', () => {
+    if(!video.paused) controls.style.opacity = '0';
+});
+
+// Đóng menu khi bấm ra ngoài
+document.addEventListener('click', () => {
+    optionsMenu.style.display = 'none';
+});
 </script>
 
 
 </body>
 </html>
-
 
 
 
