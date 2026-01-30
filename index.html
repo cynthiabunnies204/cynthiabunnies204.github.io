@@ -829,7 +829,127 @@ footer {
 .email-item:hover {
     color: inherit;
 }
+/* ===== VIDEO STYLE ===== */
+.video-container {
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    text-align: center;
+}
 
+.video-container video {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    outline: none;
+    background: #000;
+}
+
+.video-container video:focus {
+    box-shadow: 0 0 20px rgba(249, 229, 71, 0.4);
+}
+/* Container tổng thể */
+.custom-audio-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+}
+
+.flower-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Khu vực bông hoa */
+.flower-touch-area {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Cánh hoa vàng */
+.petals-group {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: 0.5s;
+    /* Mặc định chưa xoay cho đến khi nhấn phát */
+    animation: rotatePetals 8s linear infinite;
+    animation-play-state: paused;
+}
+
+.petals-group span {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(calc(var(--i) * 45deg));
+    transform-origin: center 55px;
+    width: 22px;
+    height: 45px;
+    background: linear-gradient(to top, #ffeb3b, #fbc02d);
+    border-radius: 50% 50% 10% 10%;
+    box-shadow: 0 0 10px rgba(251, 192, 45, 0.4);
+}
+
+/* Nhụy hoa (Core) */
+.flower-core {
+    position: relative;
+    z-index: 10;
+    width: 45px;
+    height: 45px;
+    background: radial-gradient(circle, #f9a825, #e65100);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    color: #fff;
+    font-size: 20px;
+    transition: 0.3s;
+}
+
+.flower-touch-area:hover .flower-core {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px #fbc02d;
+}
+
+/* Lá xanh */
+.leaf-left, .leaf-right {
+    position: absolute;
+    bottom: -5px;
+    width: 35px;
+    height: 55px;
+    background: linear-gradient(to top, #1b5e20, #66bb6a);
+    border-radius: 0 100% 0 100%;
+    z-index: 5;
+}
+
+.leaf-left {
+    left: 5px;
+    transform: rotate(-35deg);
+}
+
+.leaf-right {
+    right: 5px;
+    transform: rotate(35deg) scaleX(-1);
+}
+
+/* Hiệu ứng xoay */
+@keyframes rotatePetals {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Chữ hiển thị */
+.audio-info { text-align: center; }
+.song-name { margin: 0; color: #f9e547; font-family: 'Montserrat', sans-serif; }
+.status-text { font-size: 14px; color: #a5d6a7; margin-top: 5px; }
 </style>
 </head>
 
@@ -864,10 +984,13 @@ footer {
         </li>
         <li><a href="#tacgia">Tác giả</a></li>
         <li><a href="#tacpham">Tác phẩm</a></li>
+        <li><a href="#video">Video</a></li>
         <li><a href="#tomtat">Tóm tắt</a></li>
         <li><a href="#trichdan">Trích dẫn</a></li>
+        <li><a href="#audio-section">Audio</a></li>
         <li><a href="#funfacts">Thông tin thú vị</a></li>
         <li><a href="#loibinh">Cảm nhận</a></li>
+
     </ul>
 </nav>
 
@@ -934,7 +1057,18 @@ footer {
         <div class="clear"></div>
     </div>
 </section>
-
+<section id="video" class="reveal">
+    <h2 class="section-title">Video giới thiệu</h2>
+    <div class="card video-container">
+        <video controls width="100%" poster="tth.jpg">
+            <source src="tt.mp4" type="video/mp4">
+            Trình duyệt của bạn không hỗ trợ xem video.
+        </video>
+        <p style="text-align: center; margin-top: 15px; font-style: italic; color: #a5d6a7;">
+            Hành trình chạm vào ký ức tuổi thơ qua những thước phim đầy cảm xúc.
+        </p>
+    </div>
+</section>
 <section id="tomtat" class="reveal">
     <h2 class="section-title">Tóm tắt nội dung</h2>
     <div class="card">
@@ -958,7 +1092,30 @@ footer {
         </blockquote>
     </div>
 </section>
-
+<section id="audio-section" class="reveal">
+    <h2 class="section-title">Audio</h2>
+    
+    <div class="custom-audio-wrapper">
+        <div class="flower-container">
+            <div class="flower-touch-area" onclick="togglePlay()">
+                <div class="petals-group" id="rotating-petals">
+                    <span style="--i:0"></span><span style="--i:1"></span>
+                    <span style="--i:2"></span><span style="--i:3"></span>
+                    <span style="--i:4"></span><span style="--i:5"></span>
+                    <span style="--i:6"></span><span style="--i:7"></span>
+                </div>
+                <div class="leaf-left"></div>
+                <div class="leaf-right"></div>
+                <div class="flower-core">
+                    <i class="fas fa-play" id="play-icon"></i>
+                </div>
+            </div>
+            <audio id="audio-th">
+                <source src="th.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+    </div>
+</section>
 <section id="funfacts" class="reveal">
     <h2 class="section-title">Thông tin thú vị</h2>
     <div class="funfacts-container">
@@ -1082,11 +1239,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+function togglePlay() {
+    const audio = document.getElementById('audio-th');
+    const icon = document.getElementById('play-icon');
+    const petals = document.getElementById('rotating-petals');
+    const status = document.getElementById('status-display');
+
+    if (audio.paused) {
+        audio.play();
+        icon.classList.replace('fa-play', 'fa-pause');
+        petals.style.animationPlayState = 'running';
+        status.innerText = "Đang ngân nga giai điệu...";
+    } else {
+        audio.pause();
+        icon.classList.replace('fa-pause', 'fa-play');
+        petals.style.animationPlayState = 'paused';
+        status.innerText = "Đã tạm dừng";
+    }
+}
+
+// Tự động dừng hiệu ứng khi nhạc kết thúc
+document.getElementById('audio-th').onended = function() {
+    document.getElementById('play-icon').classList.replace('fa-pause', 'fa-play');
+    document.getElementById('rotating-petals').style.animationPlayState = 'paused';
+    document.getElementById('status-display').innerText = "Phát lại?";
+};
 </script>
 
 
 </body>
 </html>
+
 
 
 
