@@ -1227,28 +1227,29 @@ footer {
         </blockquote>
     </div>
 </section>
-<section id="audio-section" class="reveal">
-    <h2 class="section-title">Audio</h2>
-    
-    <div class="custom-audio-wrapper">
-        <div class="flower-container">
-            <div class="flower-touch-area" onclick="togglePlay()">
-                <div class="petals-group" id="rotating-petals">
-                    <span style="--i:0"></span><span style="--i:1"></span>
-                    <span style="--i:2"></span><span style="--i:3"></span>
-                    <span style="--i:4"></span><span style="--i:5"></span>
-                    <span style="--i:6"></span><span style="--i:7"></span>
-                </div>
-                <div class="leaf-left"></div>
-                <div class="leaf-right"></div>
-                <div class="flower-core">
-                    <i class="fas fa-play" id="play-icon"></i>
-                </div>
+<section id="audio-sec">
+    <h2 class="section-title">Giai điệu Audio</h2>
+    <div class="card" style="text-align:center;">
+        <div class="flower-touch-area" style="margin:auto;" onclick="toggleAudio()">
+            <div class="petals-group" id="audio-petals">
+                <span style="--i:0"></span><span style="--i:1"></span><span style="--i:2"></span><span style="--i:3"></span>
+                <span style="--i:4"></span><span style="--i:5"></span><span style="--i:6"></span><span style="--i:7"></span>
             </div>
-            <audio id="audio-th">
-                <source src="tkn.mp3" type="audio/mpeg">
-            </audio>
+            <div class="flower-core"><i class="fas fa-play" id="audio-icon"></i></div>
         </div>
+
+        <div class="audio-controls-container" style="margin-top: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            <div class="progress-container" id="audio-p-cont" style="height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; cursor: pointer;">
+                <div class="progress-bar" id="audio-p-bar" style="width: 0%; height: 100%; background: #f9e547; border-radius: 10px;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 14px; color: #fbc02d;">
+                <span id="audio-cur-t">00:00</span>
+                <span id="audio-dur-t">00:00</span>
+            </div>
+        </div>
+
+        <p style="margin-top:20px; font-style: italic;">Đang phát: th.mp3</p>
+        <audio id="audio-th"><source src="th.mp3" type="audio/mpeg"></audio>
     </div>
 </section>
 <section id="funfacts" class="reveal">
@@ -1472,11 +1473,58 @@ function changeSpeed(speed) {
     video.playbackRate = speed;
     optionsMenu.style.display = 'none';
 }
+const audio = document.getElementById('audio-th');
+const audioIcon = document.getElementById('audio-icon');
+const audioPetals = document.getElementById('audio-petals');
+const audioPBar = document.getElementById('audio-p-bar');
+const audioPCont = document.getElementById('audio-p-cont');
+const audioCurT = document.getElementById('audio-cur-t');
+const audioDurT = document.getElementById('audio-dur-t');
+
+// Hàm định dạng thời gian
+function formatAudioTime(s) {
+    if (isNaN(s)) return "00:00";
+    let m = Math.floor(s / 60);
+    let r = Math.floor(s % 60);
+    return (m < 10 ? '0' + m : m) + ':' + (r < 10 ? '0' + r : r);
+}
+
+// Khi tải xong nhạc
+audio.onloadedmetadata = () => {
+    audioDurT.innerText = formatAudioTime(audio.duration);
+};
+
+// Hàm Bật/Tắt Audio và Xoay Hoa
+function toggleAudio() {
+    if (audio.paused) {
+        audio.play();
+        audioIcon.className = 'fas fa-pause';
+        audioPetals.style.animationPlayState = 'running';
+    } else {
+        audio.pause();
+        audioIcon.className = 'fas fa-play';
+        audioPetals.style.animationPlayState = 'paused';
+    }
+}
+
+// Cập nhật thanh tiến trình Audio
+audio.ontimeupdate = () => {
+    const percent = (audio.currentTime / audio.duration) * 100;
+    audioPBar.style.width = percent + '%';
+    audioCurT.innerText = formatAudioTime(audio.currentTime);
+};
+
+// Click vào thanh tiến trình để tua nhạc
+audioPCont.onclick = (e) => {
+    const scrubTime = (e.offsetX / audioPCont.offsetWidth) * audio.duration;
+    audio.currentTime = scrubTime;
+};
 </script>
 
 
 </body>
 </html>
+
 
 
 
