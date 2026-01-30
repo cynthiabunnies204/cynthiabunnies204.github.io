@@ -950,6 +950,116 @@ footer {
 .audio-info { text-align: center; }
 .song-name { margin: 0; color: #f9e547; font-family: 'Montserrat', sans-serif; }
 .status-text { font-size: 14px; color: #a5d6a7; margin-top: 5px; }
+.custom-video-player {
+    position: relative;
+    overflow: hidden;
+    padding: 10px; /* Tạo khoảng cách cho viền */
+}
+
+/* Thanh công cụ nằm đè lên video ở phía dưới */
+.video-controls {
+    position: absolute;
+    bottom: 60px; /* Nằm trên đoạn text mô tả */
+    left: 20px;
+    right: 20px;
+    background: rgba(15, 42, 28, 0.8); /* Xanh đậm trong suốt */
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 50px; /* Bo tròn cực mạnh */
+    border: 1px solid #fbc02d; /* Viền vàng */
+    gap: 15px;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    color: #fbc02d; /* Màu vàng hoa */
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.control-btn:hover {
+    transform: scale(1.2);
+    text-shadow: 0 0 10px #fbc02d;
+}
+
+/* Thanh thời gian (Progress bar) */
+.progress-container {
+    flex-grow: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #fbc02d, #ffeb3b);
+    border-radius: 5px;
+    box-shadow: 0 0 8px #fbc02d;
+}
+
+.time-display {
+    font-size: 12px;
+    color: #c8e6c9;
+    font-family: monospace;
+}
+.time-display {
+    font-size: 13px;
+    color: #fbc02d; /* Màu vàng đồng bộ */
+    font-family: 'Montserrat', sans-serif;
+    min-width: 90px;
+    text-align: center;
+}
+
+.video-controls {
+    transition: opacity 0.4s ease; /* Hiệu ứng ẩn hiện mượt mà */
+}
+.options-wrapper {
+    position: relative;
+}
+
+.options-menu {
+    position: absolute;
+    bottom: 50px;
+    right: 0;
+    background: rgba(15, 42, 28, 0.95);
+    border: 1px solid #fbc02d;
+    border-radius: 10px;
+    width: 150px;
+    display: none; /* Ẩn mặc định */
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.option-item {
+    padding: 10px;
+    color: #f1f8e9;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.3s;
+    text-decoration: none;
+    display: block;
+}
+
+.option-item:hover {
+    background: #fbc02d;
+    color: #0f2a1c;
+}
+
+.options-menu hr {
+    border: 0;
+    border-top: 1px solid rgba(251, 192, 45, 0.3);
+    margin: 0;
+}
 </style>
 </head>
 
@@ -1059,11 +1169,36 @@ footer {
 </section>
 <section id="video" class="reveal">
     <h2 class="section-title">Video giới thiệu</h2>
-    <div class="card video-container">
-        <video controls width="100%">
+    <div class="card video-container custom-video-player" id="video-wrapper">
+        <video id="my-video" width="100%">
             <source src="tttttttb.mp4" type="video/mp4">
-            Trình duyệt của bạn không hỗ trợ xem video.
         </video>
+        
+        <div class="video-controls" id="video-controls">
+    <button class="control-btn" id="play-pause"><i class="fas fa-play"></i></button>
+    
+    <div class="progress-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    
+    <div class="time-display">
+        <span id="current-time">00:00</span> / <span id="duration-time">00:00</span>
+    </div>
+
+    <div class="options-wrapper">
+        <button class="control-btn" id="options-btn"><i class="fas fa-ellipsis-v"></i></button>
+        <div class="options-menu" id="options-menu">
+            <div class="option-item" onclick="changeSpeed(0.5)">0.5x</div>
+            <div class="option-item" onclick="changeSpeed(1)">1x</div>
+            <div class="option-item" onclick="changeSpeed(1.5)">1.5x</div>
+            <div class="option-item" onclick="changeSpeed(2)">2x</div>
+            <hr>
+        </div>
+    </div>
+    
+    <button class="control-btn" id="mute-btn"><i class="fas fa-volume-up"></i></button>
+</div>
+
         <p style="text-align: center; margin-top: 15px; font-style: italic; color: #a5d6a7;">
             Hành trình chạm vào ký ức tuổi thơ qua những thước phim đầy cảm xúc.
         </p>
@@ -1264,13 +1399,84 @@ document.getElementById('audio-th').onended = function() {
     document.getElementById('rotating-petals').style.animationPlayState = 'paused';
     document.getElementById('status-display').innerText = "Phát lại?";
 };
+const video = document.getElementById('my-video');
+const playBtn = document.getElementById('play-pause');
+const progressBar = document.getElementById('progress-bar');
+const progressCont = document.getElementById('progress-container');
+const curTimeText = document.getElementById('current-time');
+const durTimeText = document.getElementById('duration-time');
+const videoWrapper = document.getElementById('video-wrapper');
+const controls = document.getElementById('video-controls');
+
+// Hàm định dạng thời gian (giây -> phút:giây)
+function formatTime(seconds) {
+    let min = Math.floor(seconds / 60);
+    let sec = Math.floor(seconds % 60);
+    return (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
+}
+
+// Khi video tải xong dữ liệu, hiển thị tổng thời gian
+video.addEventListener('loadedmetadata', () => {
+    durTimeText.innerText = formatTime(video.duration);
+});
+
+// Chạy/Dừng video
+playBtn.addEventListener('click', () => {
+    if (video.paused) {
+        video.play();
+        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    } else {
+        video.pause();
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    }
+});
+
+// Cập nhật thanh tiến trình VÀ số giây khi video chạy
+video.addEventListener('timeupdate', () => {
+    // Cập nhật thanh dài
+    const percent = (video.currentTime / video.duration) * 100;
+    progressBar.style.width = percent + '%';
+    
+    // Cập nhật số giây đang chạy (Đây là phần quan trọng)
+    curTimeText.innerText = formatTime(video.currentTime);
+});
+
+// Tua video khi bấm vào thanh tiến trình
+progressCont.addEventListener('click', (e) => {
+    const rect = progressCont.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    video.currentTime = pos * video.duration;
+});
+
+// Hiệu ứng ẩn/hiện thanh công cụ khi di chuyển chuột
+videoWrapper.addEventListener('mouseenter', () => controls.style.opacity = '1');
+videoWrapper.addEventListener('mouseleave', () => {
+    if(!video.paused) controls.style.opacity = '0';
+});
+const optionsBtn = document.getElementById('options-btn');
+const optionsMenu = document.getElementById('options-menu');
+
+// Bấm để hiện/ẩn menu 3 chấm
+optionsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    optionsMenu.style.display = optionsMenu.style.display === 'flex' ? 'none' : 'flex';
+});
+
+// Đóng menu khi bấm ra ngoài
+document.addEventListener('click', () => {
+    optionsMenu.style.display = 'none';
+});
+
+// Hàm thay đổi tốc độ phát
+function changeSpeed(speed) {
+    video.playbackRate = speed;
+    optionsMenu.style.display = 'none';
+}
 </script>
 
 
 </body>
 </html>
-
-
 
 
 
